@@ -1,42 +1,45 @@
-name: CI
+name: ci
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: 
+ push:
+  branches:
+   - main
+
+env: 
+ PROJECT_NAME: lint-test-ios
+ XCODE_VERSION: '16.1'
 
 jobs:
-  test-package-plugin:
-    name: Test Package Plugin
-    runs-on: macos-13
-    strategy:
-      fail-fast: false
-      matrix:
-        xcode:
-        - '14.2' # Swift 5.7
-        - '14.3' # Swift 5.8
-        - '15.0' # Swift 5.9
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup
-        with:
-          xcode: ${{ matrix.xcode }}
-      - name: Test Package Plugin
-        run: bundle exec rake lint:swift
+ lint:
+  runs-on: macos
 
-  unit-tests:
-    name: Unit Tests
-    runs-on: macos-13
-    strategy:
-      fail-fast: false
-      matrix:
-        xcode:
-        - '15.0' # Swift 5.9
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup
-        with:
-          xcode: ${{ matrix.xcode }}
-      - name: Run Unit Tests
-        run: swift test
+  steps:
+   - name: checkout the code
+     uses: actions/checkout@v4
+
+   - name: set up xcode
+     uses: maxim-lobanov/setup-xcode@v1
+     with:
+      xcode_version: ${{env.XCODE_VERSION}}
+
+   - name: install swiftlint
+     run: brew install swiftlint
+
+   - name: run swiftlint
+     run: swiftlint lint --reporter github-actions-logging
+
+ build:
+   needs: lint
+   runs-on: macos-latest
+
+   steps:
+    - name: checkout the code
+      uses: actions/checkout@v4
+
+    - name: set up xcode 
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+       xcode_verson: ${{env.XCODE_VERSION}}
+
+    - name: build swift code
+      run: swift build
