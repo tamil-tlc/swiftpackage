@@ -8,8 +8,8 @@ on:
 
 env:
   XCODE_VERSION: '16.1'
-  PROJECT_NAME: 'build-test-ios'
-  SCHEME_NAME: 'build-test-ios'
+  PROJECT_NAME: 'lint-test-ios'
+  SCHEME_NAME: 'lint-test-ios'
 
 permissions:
   contents: write
