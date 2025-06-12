@@ -17,10 +17,11 @@ permissions:
 jobs:
   build:
     runs-on: macos-latest
+    
     strategy:
       matrix:
         configuration: [Debug, Release]
-        
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,6 +31,9 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
           
+      - name: List available simulators
+        run: xcrun simctl list devices available
+        
       - name: Cache derived data
         uses: actions/cache@v4
         with:
@@ -46,7 +50,7 @@ jobs:
             -project ${{ env.PROJECT_NAME }}.xcodeproj \
             -scheme ${{ env.SCHEME_NAME }} \
             -configuration ${{ matrix.configuration }} \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.1" \
+            -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             ONLY_ACTIVE_ARCH=YES \
