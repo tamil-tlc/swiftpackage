@@ -1,9 +1,9 @@
-name: ci
+name: ci workflow
 
 on: 
  push:
-  branches:
-   - main
+  branches: [main, master]
+   
 
 env: 
  PROJECT_NAME: lint-test-ios
@@ -11,7 +11,7 @@ env:
 
 jobs:
  lint:
-  runs-on: macos
+  runs-on: macos-latest
 
   steps:
    - name: checkout the code
